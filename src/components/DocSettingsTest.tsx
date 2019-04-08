@@ -31,6 +31,13 @@ const removeFromSettings = async key => {
   return null;
 };
 
+const refreshSettings = () => {
+  const { settings } = Office.context.document;
+  return new Promise(resolve =>
+    settings.refreshAsync(({ value }) => resolve(value.get(settingsKey)))
+  );
+};
+
 const DocSettingsTest: React.FC<{}> = () => {
   const [settings, setSettings] = React.useState(null);
 
@@ -47,12 +54,16 @@ const DocSettingsTest: React.FC<{}> = () => {
   const add = async () =>
     setSettings(await addToSettings(settingsKey, settingsValue));
   const clear = async () => setSettings(await removeFromSettings(settingsKey));
+  const refresh = async () => setSettings(await refreshSettings());
+
+  //setSettings(await refreshSettings());
 
   return (
     <React.Fragment>
       <SettingsInfo>{`Current settings: ${settings || 'empty'}`}</SettingsInfo>
       <Button onClick={add}>Add to Settings</Button>
       <Button onClick={clear}>Clear Settings</Button>
+      <Button onClick={refresh}>Refresh Settings</Button>
     </React.Fragment>
   );
 };
